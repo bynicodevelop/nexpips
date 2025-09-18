@@ -2,23 +2,15 @@
 import CardComponent from "./components/CardComponent";
 import HeadingComponent from "./components/HeadingComponent";
 import FormComponent from "./components/FormComponent";
+import { useEmailing } from "./hooks/emailing";
 
 export default function Home() {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const data = new FormData(form);
-    const email = data.get("email") || data.get("email-final") || "";
-    alert(
-      `Merci ! Nous t\u2019ajouterons sur la liste d\u2019attente.\nEmail: ${email}`
-    );
-    form.reset();
-  };
+  const { subscribeEmailing } = useEmailing();
 
   return (
     <main className="min-h-screen bg-base-100 text-base-content">
       {/* Hero */}
-      <HeadingComponent handleSubmit={handleSubmit} />
+      <HeadingComponent subscribeEmailing={subscribeEmailing} />
 
       {/* Section 1 – Pourquoi s’inscrire ? */}
       <section id="pourquoi" aria-label="Pourquoi s’inscrire" className="py-20">
@@ -101,7 +93,7 @@ export default function Home() {
             prioritaire et des avantages exclusifs.
           </p>
           <FormComponent
-                handleSubmit={handleSubmit}
+                handleSubmit={subscribeEmailing}
                 id="email-final"
                 placeholder="Entrer mon e-mail"
                 label="Votre email"

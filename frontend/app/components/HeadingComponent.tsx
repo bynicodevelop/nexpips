@@ -1,8 +1,9 @@
+import { EmailingType } from "@/types/emailing";
 import FormComponent from "./FormComponent";
 export default function HeadingComponent({
-  handleSubmit,
+  subscribeEmailing,
 }: {
-  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  subscribeEmailing: (emailingForm: EmailingType) => void;
 }) {
   return (
     <header aria-label="En-tête">
@@ -27,7 +28,7 @@ export default function HeadingComponent({
           {/* CTA form */}
           <div className="mt-8">
             <FormComponent
-              handleSubmit={handleSubmit}
+              handleSubmit={subscribeEmailing}
               id="email"
               placeholder="Votre email"
               label="Votre email"
