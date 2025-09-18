@@ -2,7 +2,7 @@
 import CardComponent from "./components/CardComponent";
 import HeadingComponent from "./components/HeadingComponent";
 import FormComponent from "./components/FormComponent";
-import { useEmailing } from "./hooks/emailing";
+import { useEmailing } from "./hooks/useEmailing";
 
 export default function Home() {
   const { subscribeEmailing } = useEmailing();
