@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { FirebaseProvider } from "./providers/FirebaseProvider";
+import ToastComponent from "./components/shared/ToastComponent";
 
 export const metadata: Metadata = {
   title: "Tracker de Trades",
@@ -22,6 +23,8 @@ export default function RootLayout({
               © {new Date().getFullYear()} Tracker Trading — Tous droits réservés.
             </div>
           </footer>
+
+          <ToastComponent />
         </FirebaseProvider>
       </body>
     </html>
