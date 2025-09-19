@@ -20,9 +20,12 @@ export function FirebaseProvider({ children }: { children: React.ReactNode }) {
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    initializeFirebase().then(() => {
+    const initialize = async () => {
+      await initializeFirebase();
       setInitialized(true);
-    });
+    };
+    
+    initialize();
   }, [initializeFirebase]);
 
   const value = useMemo<FirebaseContextType>(

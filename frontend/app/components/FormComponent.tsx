@@ -3,6 +3,8 @@
 import { useForm } from "react-hook-form";
 import * as React from "react";
 import { EmailingType } from "@/types/emailing";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { EmailingSchema } from "@/validators/emailing";
 
 export default function FormComponent({
   handleSubmit: onEmailSubmit,
@@ -29,6 +31,7 @@ export default function FormComponent({
     formState: { errors, isSubmitting },
     reset,
   } = useForm<EmailingType>({
+    resolver: zodResolver(EmailingSchema),
     defaultValues: { email: "" },
     mode: "onSubmit",
   });
@@ -59,14 +62,7 @@ export default function FormComponent({
         aria-invalid={emailError ? "true" : "false"}
         aria-describedby={emailError ? errorId : undefined}
         className={inputClassName + (emailError ? " input-error" : "")}
-        {...register("email", {
-          required: "L’email est requis",
-          pattern: {
-            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            message: "Format d’email invalide",
-          },
-          maxLength: { value: 254, message: "Email trop long" },
-        })}
+        {...register("email")} 
       />
       <button
         type="submit"

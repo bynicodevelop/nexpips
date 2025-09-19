@@ -1,8 +1,14 @@
 import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
 import { getAnalytics, isSupported, type Analytics } from "firebase/analytics";
+import {
+  Firestore,
+  getFirestore,
+  connectFirestoreEmulator,
+} from "firebase/firestore";
 
 let firebaseApp: FirebaseApp | null = null;
 let analyticsInstance: Analytics | null = null;
+let firestoreInstance: Firestore | null = null;
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -23,9 +29,11 @@ export const useFirebase = () => {
         );
         return;
       }
+
       firebaseApp = getApps().length
         ? getApps()[0]
         : initializeApp(firebaseConfig);
+
       // Analytics uniquement dans le navigateur
       if (typeof window !== "undefined") {
         try {
@@ -38,8 +46,29 @@ export const useFirebase = () => {
       }
     }
 
-    return { app: firebaseApp, analytics: analyticsInstance };
+    firestoreInstance = getFirestore(firebaseApp);
+
+    if (
+      typeof window !== "undefined" &&
+      process.env.NEXT_PUBLIC_FIREBASE_EMULATOR === "true"
+    ) {
+      try {
+        connectFirestoreEmulator(firestoreInstance, "localhost", 8080);
+      } catch (e) {
+        console.warn("Impossible de connecter Firestore à l'émulateur:", e);
+      }
+    }
+
+    return {
+      app: firebaseApp,
+      analytics: analyticsInstance,
+      firestore: firestoreInstance,
+    };
   };
 
-  return { initializeFirebase };
+  const getFirebaseFirestore = (): Firestore | null => {
+    return firestoreInstance;
+  };
+
+  return { initializeFirebase, getFirebaseFirestore };
 };
