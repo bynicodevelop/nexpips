@@ -11,16 +11,18 @@ import {
 } from "firebase/firestore";
 import { EmailingSchema } from "@/validators/emailing";
 import { useToast } from "../hooks/useToats";
+import { useLog } from "./useLog";
 
 export const useEmailing = () => {
   const { getFirebaseFirestore } = useFirebase();
   const { showErrorToast, showSuccessToast, showInfoToast } = useToast();
+  const { warn, error: logError } = useLog({ ns: "Emailing" });
 
   const subscribeEmailing = async (emailingForm: EmailingType) => {
     try {
       EmailingSchema.parse(emailingForm);
     } catch (e) {
-      console.warn("Emailing invalide:", e);
+      warn("Emailing invalide:", e);
       showErrorToast("Email invalide. Merci de vérifier le format.");
       return { ok: false, reason: "invalid_email" };
     }
@@ -28,7 +30,7 @@ export const useEmailing = () => {
     const firestore = await getFirebaseFirestore();
 
     if (!firestore) {
-      console.warn("Firestore n'est pas initialisé.");
+      warn("Firestore n'est pas initialisé.");
       showErrorToast("Service indisponible. Réessayez dans un instant.");
       return { ok: false, reason: "firestore_not_initialized" };
     }
@@ -63,7 +65,7 @@ export const useEmailing = () => {
       showSuccessToast("Inscription enregistrée. Merci !");
       return { ok: true, id: docRef.id, already: false };
     } catch (error) {
-      console.error("Erreur lors de l'inscription emailing:", error);
+      logError("Erreur lors de l'inscription emailing:", error);
       showErrorToast("Une erreur est survenue. Réessayez plus tard.");
       return { ok: false, reason: "exception", error };
     }

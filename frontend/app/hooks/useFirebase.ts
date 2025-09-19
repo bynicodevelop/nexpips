@@ -5,6 +5,7 @@ import {
   getFirestore,
   connectFirestoreEmulator,
 } from "firebase/firestore";
+import { useLog } from "./useLog";
 
 let firebaseApp: FirebaseApp | null = null;
 let analyticsInstance: Analytics | null = null;
@@ -21,12 +22,11 @@ const firebaseConfig = {
 };
 
 export const useFirebase = () => {
+  const { warn } = useLog({ ns: "Firebase" });
   const initializeFirebase = async () => {
     if (!firebaseApp) {
       if (Object.values(firebaseConfig).some((v) => !v)) {
-        console.warn(
-          "Configuration Firebase incomplète (variables manquantes)."
-        );
+        warn("Configuration Firebase incomplète (variables manquantes).");
         return;
       }
 
@@ -55,7 +55,7 @@ export const useFirebase = () => {
       try {
         connectFirestoreEmulator(firestoreInstance, "localhost", 8080);
       } catch (e) {
-        console.warn("Impossible de connecter Firestore à l'émulateur:", e);
+        warn("Impossible de connecter Firestore à l'émulateur:", e);
       }
     }
 
