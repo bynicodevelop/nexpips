@@ -5,5 +5,10 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write: if false;
     }
+
+    match /emailing/{emailDoc} {
+      allow create, list: if true;
+      allow read, update, delete: if false;
+    }
   }
 }
