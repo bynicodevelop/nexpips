@@ -85,8 +85,6 @@
 /* =============================
 	 Toast notifications (custom)
 	 ============================= */
-
-/* Variantes de couleur — tu peux ajuster les variables ci-dessous */
 .toast-success {
   background-color: var(--color-success);
   color: var(--color-success-content);

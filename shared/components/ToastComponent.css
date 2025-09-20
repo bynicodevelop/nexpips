@@ -1,0 +1,12 @@
+.toast {
+  position: fixed !important;
+  z-index: 9999 !important;
+}
+
+.toast-end {
+  right: 1rem !important;
+}
+
+.toast-top {
+  top: 1rem !important;
+}

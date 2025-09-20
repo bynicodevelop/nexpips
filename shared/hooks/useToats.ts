@@ -1,6 +1,6 @@
 "use client";
 
-import { NOTIFICATION_TYPES, NotificationType } from "@/types/notifications";
+import { NOTIFICATION_TYPES, NotificationType } from "../types/notifications";
 
 type ShowToastOptions = {
   message: string;

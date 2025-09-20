@@ -1,20 +1,9 @@
 import { emailingDocumentFactory, EmailingType } from "@/types/emailing";
-import { useFirebase } from "./useFirebase";
-import {
-  collection,
-  addDoc,
-  query,
-  where,
-  getDocs,
-  limit,
-  Firestore,
-} from "firebase/firestore";
 import { EmailingSchema } from "@/validators/emailing";
-import { useToast } from "../hooks/useToats";
-import { useLog } from "./useLog";
+import { useToast, useLog, useFirestore } from "@shared/hooks"; // Tout depuis shared
 
 export const useEmailing = () => {
-  const { getFirebaseFirestore } = useFirebase();
+  const { addDocument, findDocumentByField } = useFirestore(); // Méthodes centralisées
   const { showErrorToast, showSuccessToast, showInfoToast } = useToast();
   const { warn, error: logError } = useLog({ ns: "Emailing" });
 
@@ -27,54 +16,31 @@ export const useEmailing = () => {
       return { ok: false, reason: "invalid_email" };
     }
 
-    const firestore = await getFirebaseFirestore();
-
-    if (!firestore) {
-      warn("Firestore n'est pas initialisé.");
-      showErrorToast("Service indisponible. Réessayez dans un instant.");
-      return { ok: false, reason: "firestore_not_initialized" };
-    }
     const emailLower = emailingForm.email.toLowerCase();
 
     try {
-      const existing = await _findEmailingByEmail(emailLower, firestore);
+      // Utiliser la méthode centralisée pour chercher l'email
+      const existing = await findDocumentByField(
+        "emailing",
+        "email",
+        emailLower
+      );
 
       if (existing) {
         showInfoToast("Inscription enregistrée. Merci !");
         return { ok: true, id: existing.id, already: true };
       }
 
+      // Utiliser la méthode centralisée pour ajouter le document
       const payload = emailingDocumentFactory(emailingForm.email, emailLower);
-      const docRef = await addDoc(collection(firestore, "emailing"), payload);
-      
+      const docRef = await addDocument("emailing", payload);
+
       showSuccessToast("Inscription enregistrée. Merci !");
       return { ok: true, id: docRef.id, already: false };
     } catch (error) {
       logError("Erreur lors de l'inscription emailing:", error);
       showErrorToast("Une erreur est survenue. Réessayez plus tard.");
       return { ok: false, reason: "exception", error };
-    }
-  };
-
-  const _findEmailingByEmail = async (
-    emailLower: string,
-    firestore: Firestore
-  ) => {
-    try {
-      const emailingQuery = query(
-        collection(firestore, "emailing"),
-        where("email", "==", emailLower),
-        limit(1)
-      );
-      const snap = await getDocs(emailingQuery);
-      if (!snap.empty) {
-        const existing = snap.docs[0];
-        return { id: existing.id, data: existing.data() };
-      }
-      return null;
-    } catch (error) {
-      logError("Erreur lors de la recherche emailing:", error);
-      return null;
     }
   };
 

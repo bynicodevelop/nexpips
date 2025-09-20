@@ -1,11 +1,12 @@
 "use client";
 
-import { NOTIFICATION_TYPES, NotificationType } from "@/types/notifications";
+import { NOTIFICATION_TYPES, NotificationType } from "../types/notifications";
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { CiCircleCheck } from "react-icons/ci";
 import { IoClose } from "react-icons/io5";
 import { MdErrorOutline } from "react-icons/md";
+import "./ToastComponent.css";
 
 interface ToastProps {
 	id: string;

@@ -1,4 +1,4 @@
-import { ServerDate, serverDateFactory } from "./server-date";
+import { ServerDate, serverDateFactory } from "@shared/types/server-date";
 
 export type EmailingType = {
   email: string;

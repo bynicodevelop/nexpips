@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { FirebaseProvider } from "./providers/FirebaseProvider";
+import { FirebaseProvider } from "@shared/providers/FirebaseProvider";
 
 export const metadata: Metadata = {
   title: "Tracker de Trades",
