@@ -7,9 +7,20 @@ vi.mock('react-hook-form', () => {
   return {
     useForm: () => ({
       register: () => ({ name: 'email', onChange: () => {}, onBlur: () => {}, ref: () => {} }),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       handleSubmit: (cb: any) => (e?: any) => { e?.preventDefault?.(); cb({ email: '' }) },
       formState: { errors: {}, isSubmitting: false },
       reset: () => {},
+    }),
+  }
+})
+
+// Mock de @shared/hooks pour éviter d'importer Firebase/Firestore via useAnalytics
+vi.mock('@shared/hooks', () => {
+  return {
+    useAnalytics: () => ({
+      logEvent: vi.fn(),
+      logPageView: vi.fn(),
     }),
   }
 })

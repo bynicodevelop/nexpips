@@ -7,7 +7,7 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest --environment=jsdom --globals"
   },
   "dependencies": {
     "firebase": "^12.3.0",
