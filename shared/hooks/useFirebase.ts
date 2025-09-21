@@ -10,44 +10,52 @@ import { useLog } from "./useLog";
 let firebaseApp: FirebaseApp | null = null;
 let analyticsInstance: Analytics | null = null;
 let firestoreInstance: Firestore | null = null;
+let initPromise: Promise<void> | null = null;
+
+const IS_BROWSER = typeof window !== "undefined";
+const IS_EMULATOR = process.env.NEXT_PUBLIC_FIREBASE_EMULATOR === "true";
 
 export const useFirebase = () => {
   const { warn } = useLog({ ns: "Firebase" });
   const initializeFirebase = async (firebaseConfig: Record<string, any>) => {
-    if (!firebaseApp) {
-      if (Object.values(firebaseConfig).some((v) => !v)) {
-        warn("Configuration Firebase incomplète (variables manquantes).");
-        return;
-      }
-
-      firebaseApp = getApps().length
-        ? getApps()[0]
-        : initializeApp(firebaseConfig);
-
-      // Analytics uniquement dans le navigateur
-      if (typeof window !== "undefined") {
-        try {
-          if (await isSupported()) {
-            analyticsInstance = getAnalytics(firebaseApp);
+    if (!initPromise) {
+      initPromise = (async () => {
+        const hasMissing = Object.values(firebaseConfig).some((v) => !v);
+        if (!firebaseApp) {
+          if (hasMissing) {
+            warn("Configuration Firebase incomplète (variables manquantes).");
+            return;
           }
-        } catch {
-          // Ignorer si non supporté (ex: SSR)
+
+          firebaseApp = getApps().length
+            ? getApps()[0]
+            : initializeApp(firebaseConfig);
+
+          // Analytics uniquement dans le navigateur
+          if (IS_BROWSER) {
+            try {
+              if (await isSupported()) {
+                analyticsInstance = getAnalytics(firebaseApp);
+              }
+            } catch {
+              // Ignorer si non supporté (ex: SSR)
+            }
+          }
         }
-      }
+
+        firestoreInstance = getFirestore(firebaseApp);
+
+        if (IS_BROWSER && IS_EMULATOR) {
+          try {
+            connectFirestoreEmulator(firestoreInstance, "localhost", 8080);
+          } catch (e) {
+            warn("Impossible de connecter Firestore à l'émulateur:", e);
+          }
+        }
+      })();
     }
 
-    firestoreInstance = getFirestore(firebaseApp);
-
-    if (
-      typeof window !== "undefined" &&
-      process.env.NEXT_PUBLIC_FIREBASE_EMULATOR === "true"
-    ) {
-      try {
-        connectFirestoreEmulator(firestoreInstance, "localhost", 8080);
-      } catch (e) {
-        warn("Impossible de connecter Firestore à l'émulateur:", e);
-      }
-    }
+    await initPromise;
 
     return {
       app: firebaseApp,
@@ -56,9 +64,17 @@ export const useFirebase = () => {
     };
   };
 
+  const getFirebaseAnalytics = (): Analytics | null => {
+    return analyticsInstance;
+  };
+
   const getFirebaseFirestore = (): Firestore | null => {
     return firestoreInstance;
   };
 
-  return { initializeFirebase, getFirebaseFirestore };
+  return {
+    initializeFirebase,
+    getFirebaseFirestore,
+    getFirebaseAnalytics,
+  };
 };
