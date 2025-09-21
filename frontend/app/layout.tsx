@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { FirebaseProvider } from "@shared/providers/FirebaseProvider";
 import ToastComponent from "@shared/components/ToastComponent";
+import AnalyticsListener from "./providers/AnalyticsListener";
 
 export const metadata: Metadata = {
   title: "Tracker de Trades",
@@ -25,6 +26,7 @@ export default function RootLayout({
           </footer>
 
           <ToastComponent />
+          <AnalyticsListener />
         </FirebaseProvider>
       </body>
     </html>

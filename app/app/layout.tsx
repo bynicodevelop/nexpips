@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { FirebaseProvider } from "@shared/providers/FirebaseProvider";
+import AnalyticsListener from "./providers/AnalyticsListener";
 
 export const metadata: Metadata = {
   title: "Tracker de Trades",
@@ -22,6 +23,8 @@ export default function RootLayout({
               © {new Date().getFullYear()} Tracker Trading — Tous droits réservés.
             </div>
           </footer>
+
+          <AnalyticsListener />
         </FirebaseProvider>
       </body>
     </html>
