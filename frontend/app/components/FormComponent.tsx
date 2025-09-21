@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form";
 import * as React from "react";
 import { EmailingType } from "@/types/emailing";
+import { useAnalytics } from "@shared/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EmailingSchema } from "@/validators/emailing";
 
@@ -36,8 +37,11 @@ export default function FormComponent({
     mode: "onSubmit",
   });
 
+  const { logEvent } = useAnalytics();
+
   const onSubmit = ({ email }: EmailingType) => {
     onEmailSubmit({ email });
+    logEvent("emailing_form_submitted", { method: "newsletter", has_email: !!email });
     reset();
   };
 
