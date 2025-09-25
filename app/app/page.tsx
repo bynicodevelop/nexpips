@@ -2,7 +2,7 @@
 "use client";
 
 import { useAuthContext } from "./providers/AuthProvider";
-import SignoutButton from "./shared/components/SignoutButton";
+import Link from "next/link";
 
 export default function Home() {
   const { isAuthenticated, user } = useAuthContext();
@@ -19,8 +19,14 @@ export default function Home() {
       </div>
 
       {isAuthenticated && (
-        <div>
-          <SignoutButton />
+        <div className="flex items-center gap-4">
+          <Link
+            href="/settings"
+            className="btn btn-outline btn-sm"
+            prefetch
+          >
+            Paramètres
+          </Link>
         </div>
       )}
     </div>
