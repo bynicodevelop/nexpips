@@ -5,11 +5,19 @@ import {
   getFirestore,
   connectFirestoreEmulator,
 } from "firebase/firestore";
+import {
+  getAuth,
+  type Auth,
+  connectAuthEmulator,
+  setPersistence,
+  browserLocalPersistence,
+} from "firebase/auth";
 import { useLog } from "./useLog";
 
 let firebaseApp: FirebaseApp | null = null;
 let analyticsInstance: Analytics | null = null;
 let firestoreInstance: Firestore | null = null;
+let authInstance: Auth | null = null;
 let initPromise: Promise<void> | null = null;
 
 const IS_BROWSER = typeof window !== "undefined";
@@ -31,7 +39,6 @@ export const useFirebase = () => {
             ? getApps()[0]
             : initializeApp(firebaseConfig);
 
-          // Analytics uniquement dans le navigateur
           if (IS_BROWSER) {
             try {
               if (await isSupported()) {
@@ -45,11 +52,34 @@ export const useFirebase = () => {
 
         firestoreInstance = getFirestore(firebaseApp);
 
-        if (IS_BROWSER && IS_EMULATOR) {
+        if (IS_BROWSER) {
           try {
-            connectFirestoreEmulator(firestoreInstance, "localhost", 8080);
+            authInstance = getAuth(firebaseApp);
+
+            if (IS_EMULATOR) {
+              try {
+                console.debug("[Firebase] Connexion émulateur Auth…");
+                connectAuthEmulator(authInstance, "http://localhost:9099", {
+                  disableWarnings: true,
+                });
+                console.debug("[Firebase] Emulateur Auth connecté.");
+              } catch (e) {
+                warn("Echec connexion émulateur Auth:", e);
+              }
+            }
+
+            await setPersistence(authInstance, browserLocalPersistence);
           } catch (e) {
-            warn("Impossible de connecter Firestore à l'émulateur:", e);
+            warn("Impossible d'initialiser Firebase Auth:", e);
+          }
+
+          if (IS_EMULATOR) {
+            try {
+              console.debug("[Firebase] Connexion émulateur Firestore…");
+              connectFirestoreEmulator(firestoreInstance, "localhost", 8080);
+            } catch (e) {
+              warn("Impossible de connecter Firestore à l'émulateur:", e);
+            }
           }
         }
       })();
@@ -61,6 +91,7 @@ export const useFirebase = () => {
       app: firebaseApp,
       analytics: analyticsInstance,
       firestore: firestoreInstance,
+      auth: authInstance,
     };
   };
 
@@ -72,9 +103,14 @@ export const useFirebase = () => {
     return firestoreInstance;
   };
 
+  const getFirebaseAuth = (): Auth | null => {
+    return authInstance;
+  };
+
   return {
     initializeFirebase,
     getFirebaseFirestore,
     getFirebaseAnalytics,
+    getFirebaseAuth,
   };
 };
