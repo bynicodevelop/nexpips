@@ -3,6 +3,7 @@ import "./globals.css";
 import { FirebaseProvider } from "@shared/providers/FirebaseProvider";
 import AnalyticsListenerProvider from "./providers/AnalyticsListenerProvider";
 import { AuthProvider } from "./providers/AuthProvider";
+import Header from "./shared/components/Header";
 
 export const metadata: Metadata = {
   title: "Tracker de Trades",
@@ -23,7 +24,8 @@ export default function RootLayout({
             redirectAfterSignout="/signin"
             redirectAfterAuth="/"
           >
-            {children}
+            <Header />
+            <main className="max-w-5xl mx-auto py-6">{children}</main>
             <footer className="py-10">
               <div className="mx-auto max-w-5xl px-6 text-sm text-base-content/80">
                 © {new Date().getFullYear()} Tracker Trading — Tous droits réservés.
