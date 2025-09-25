@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import SharedAnalyticsListener from '@shared/providers/AnalyticsListener'
 
-export default function AnalyticsListener() {
+export default function AnalyticsListenerProvider() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 

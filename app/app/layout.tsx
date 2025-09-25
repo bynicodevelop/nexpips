@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { FirebaseProvider } from "@shared/providers/FirebaseProvider";
-import AnalyticsListener from "./providers/AnalyticsListener";
+import AnalyticsListenerProvider from "./providers/AnalyticsListenerProvider";
 
 export const metadata: Metadata = {
   title: "Tracker de Trades",
@@ -24,7 +24,7 @@ export default function RootLayout({
             </div>
           </footer>
 
-          <AnalyticsListener />
+          <AnalyticsListenerProvider />
         </FirebaseProvider>
       </body>
     </html>
