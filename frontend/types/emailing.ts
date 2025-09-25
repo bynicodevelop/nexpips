@@ -1,8 +1,8 @@
+import { EmailingSchema } from "@/validators/emailing";
 import { ServerDate, serverDateFactory } from "@shared/types/server-date";
+import z from "zod";
 
-export type EmailingType = {
-  email: string;
-};
+export type EmailingType = z.infer<typeof EmailingSchema>;
 
 export type EmailingDocument = EmailingType &
   ServerDate & {
