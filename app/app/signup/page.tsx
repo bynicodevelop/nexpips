@@ -13,7 +13,7 @@ export default function Signup() {
   };
 
   return (
-    <div className="hero min-h-[calc(100vh-80px)] bg-base-200">
+    <div className="hero min-h-[calc(100vh-80px)]">
       <div className="hero-content w-full flex-col">
         <div className="text-center">
           <h1 className="text-3xl font-bold">Créer un compte</h1>
@@ -22,7 +22,7 @@ export default function Signup() {
           </p>
         </div>
 
-        <div className="card w-full max-w-sm shadow-2xl bg-base-100">
+        <div className="card w-full max-w-sm shadow-2xl">
           <AuthFormComponent handleSubmit={onSubmit} />
           <div className="px-8 pb-6 text-center text-sm">
             <span className="text-base-content/70">Déjà un compte ? </span>
